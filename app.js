@@ -7,6 +7,7 @@ const DELAY = 60* 1000 //fetch in every 60 seconds
 const DELAY_DATE = 6
 const SETU_URL = process.env.SETU_URL
 const CHANNEL = process.env.CHANNEL
+let lastMsg = ''
 bot.login(TOKEN)
 
 bot.on('ready', () => {
@@ -28,7 +29,9 @@ const fetchData = async()=>{
             })
             msg+='-------------------\n'
         });
-        bot.channels.cache.get(CHANNEL).send(msg)
+        if(lastMsg !== msg)
+            bot.channels.cache.get(CHANNEL).send(msg)
+        lastMsg = msg
     }
 }
 

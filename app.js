@@ -9,7 +9,7 @@ const SETU_URL = process.env.SETU_URL
 const CHANNEL = process.env.CHANNEL
 const SEPERATOR = '\0'
 const UNNECCESSARY_KEYS = ['center_id','pincode','from','to','lat','long','fee','session_id','fee_type','alow_all_age','slots','state_name']
-const LINE_SEPERATOR = '\n\nEND\n\n'
+const LINE_SEPERATOR = '\n-------------------\n'
 let lastMsg = ['','','','','','']
 bot.login(TOKEN)
 
@@ -27,7 +27,7 @@ const fetchData = async()=>{
             const data =await res.json()
             const sessions =await data.sessions
             let msg = ''
-            sessions.forEach(s => {
+            sessions.sort((a,b)=>a['address']>b['address']).forEach(s => {
                 Object.keys(s).filter(e=>!(UNNECCESSARY_KEYS.includes(e))).forEach(k=>{
                     if(s['available_capacity'])
                         msg+=`${k}:${s[k]}\n`
@@ -35,9 +35,9 @@ const fetchData = async()=>{
                 msg+=SEPERATOR
             })
             if(lastMsg[i] !== msg && msg){
-                msg.split(SEPERATOR).forEach(m=>{
+                msg.split(SEPERATOR).forEach(async(m)=>{
                     if (m) {
-                        bot.channels.cache.get(CHANNEL).send(m+LINE_SEPERATOR)
+                        await bot.channels.cache.get(CHANNEL).send(m+LINE_SEPERATOR)
                     }
                 })
             }

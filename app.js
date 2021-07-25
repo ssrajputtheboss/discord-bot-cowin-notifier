@@ -7,7 +7,7 @@ const DELAY = 2 * 60 * 1000 //fetch in every 2 minutes
 const DELAY_DATE = 7
 const SETU_URL = process.env.SETU_URL
 const CHANNEL = process.env.CHANNEL
-const SEPERATOR = '<<>>'
+const SEPERATOR = '\0'
 const UNNECCESSARY_KEYS = ['center_id','pincode','from','to','lat','long','fee','session_id','fee_type','alow_all_age','slots','state_name']
 const LINE_SEPERATOR = '\n\nEND\n\n'
 let lastMsg = ['','','','','','']
@@ -29,7 +29,7 @@ const fetchData = async()=>{
             let msg = ''
             sessions.forEach(s => {
                 Object.keys(s).filter(e=>!(UNNECCESSARY_KEYS.includes(e))).forEach(k=>{
-                    if(s['vaccine'] === 'COVAXIN' && s['available_capacity'])
+                    if(s['available_capacity'])
                         msg+=`${k}:${s[k]}\n`
                 })
                 msg+=SEPERATOR
@@ -37,7 +37,7 @@ const fetchData = async()=>{
             if(lastMsg[i] !== msg && msg){
                 msg.split(SEPERATOR).forEach(m=>{
                     if (m) {
-                        bot.channels.cache.get(CHANNEL).send(msg+LINE_SEPERATOR)
+                        bot.channels.cache.get(CHANNEL).send(m+LINE_SEPERATOR)
                     }
                 })
             }
